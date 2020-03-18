@@ -14,7 +14,6 @@ sep1=list(sep)
 dfpartidos[sep1]=pd.DataFrame(dfpartidos.away_team.values.tolist(),index=dfpartidos.index)
 
 listaporcentajes=[]
-
 #lista con todos los equipos de la competición
 equipos=dfpartidos.home_team_name.unique()
 
@@ -41,14 +40,18 @@ for equipo in equipos:
     trasperdida = len(filastrasperdida[filastrasperdida == True].index)
     porcentaje=(trasperdida/totales)*100
     porcentaje=round(porcentaje,2)
-    a=(totales,trasperdida,porcentaje)
+    numpartidos=len(dfsoloequipo)
+    a=(totales,trasperdida,porcentaje,numpartidos)
     listaporcentajes.append(a)
 
 #trabajo con dataframe para representar
 paragrafico=list(zip(equipos, listaporcentajes))
 dfgrafico=pd.DataFrame(paragrafico, columns = ['Equipo' , 'Datos'])
-dfgrafico[['Totales','Tras_perdida','Porcentaje']] = pd.DataFrame(dfgrafico.Datos.values.tolist(), index= dfgrafico.index)
+dfgrafico[['Totales','Tras_perdida','Porcentaje','Partidos']] = pd.DataFrame(dfgrafico.Datos.values.tolist(), index= dfgrafico.index)
 dfgrafico.drop(columns=['Datos'],inplace=True)
+
+dfgrafico['Totales']=dfgrafico['Totales']/dfgrafico['Partidos']
+dfgrafico['Tras_perdida']=dfgrafico['Tras_perdida']/dfgrafico['Partidos']
 dfordenado=dfgrafico.sort_values(by='Totales',ascending=True)
 
 #representación de los datos
@@ -68,8 +71,8 @@ y_label.set_visible(False)
 
 ax.tick_params(axis='both', labelsize=15)
 
-ax.text(2000,13, s = "Acciones defensivas", size = 35, color='#000C61', ha='center', family='bahnschrift')
-ax.text(2400,11.95, s = "[]%: Porcentaje de acciones tras pérdida", size = 15, color='#000C61', ha='left', family='bahnschrift')
+ax.text(150,13, s = "Acciones defensivas/90", size = 35, color='#000C61', ha='center', family='bahnschrift')
+ax.text(180,11.95, s = "[]%: Porcentaje de acciones tras pérdida", size = 15, color='#000C61', ha='left', family='bahnschrift')
 
 for i in range(len(dfordenado)):
-    ax.text(x=((dfordenado.iloc[i,1])+300),y=(i-0.23),s="{} %".format(dfordenado.iloc[i,3]),color='#000C61', ha='center', family='bahnschrift',size = 15,)
+    ax.text(x=((dfordenado.iloc[i,1])+20),y=(i-0.23),s="{} %".format(dfordenado.iloc[i,3]),color='#000C61', ha='center', family='bahnschrift',size = 15)
